@@ -69,6 +69,32 @@ namespace Lab0
 
         // TODO
         public double MedianKey => throw new NotImplementedException();
+        public double MedianKey
+        {
+            get
+            {
+                // get the inorder keys
+                var keys = InOrderKeys;
+                //odd
+                if (keys.Count % 2 == 1) ;
+                {
+                    int middleIndex = keys.Count / 2;
+                    return keys[middleIndex];
+
+                }
+                //even number of keys
+                else
+                {
+                    int middleIndex1 = keys.Count / 2;
+                    int middleIndex2 = keys.Count / 2;
+
+                    int sum = keys[middleIndex1] + keys[middleIndex2];
+
+                    return sum / 2.0;
+
+                }
+            }
+        }
 
 
         public BinarySearchTreeNode<T> GetNode(int key)
