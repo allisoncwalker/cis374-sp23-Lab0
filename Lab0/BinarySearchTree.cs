@@ -186,10 +186,31 @@ namespace Lab0
             throw new NotImplementedException();
         }
 
-        // TODO
         public List<BinarySearchTreeNode<T>> RangeSearch(int min, int max)
         {
-            throw new NotImplementedException();
+            //Method 2=> Use InOrderKEy
+           
+            List<BinarySearchTreeNode<T>> nodeList = new List<BinarySearchTreeNode<T>>;
+            if (min > max)
+            {
+                return nodeList;
+            }
+
+            var orderKey = this.InOrderKeys;
+
+            foreach(int Key in orderedKeys)
+            {
+                if(Key >= min && Key <= max)
+                {
+                    nodeList.Add(GetNode(Key));
+                }
+
+                if (Key > max)
+                {
+                    break;
+                }
+            }
+            return nodeList
         }
 
         public void Remove(int key)
