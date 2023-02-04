@@ -204,7 +204,7 @@ namespace Lab0
         {
             // find the min node in the right child's subtree
             if (node.Right != null)
-            {
+            {  
                 return MinNode(node.Right);
             }
             var pNode = node.Parent;
