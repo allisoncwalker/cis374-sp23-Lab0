@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace Lab0
 {
@@ -6,7 +7,7 @@ namespace Lab0
 	{
 
         private BinarySearchTreeNode<T> Root { get; set; }
-
+            
         public BinarySearchTree()
 		{
             Root = null;
@@ -17,11 +18,11 @@ namespace Lab0
 
         public int Count { get; private set; }
 
-        // TODO
-        public int Height => HeightRecursive(Root);
+        public int Height => IsEmpty? 0: HeightRecursive(Root);
 
         private int HeightRecursive(BinarySearchTreeNode<T> node)
-        {
+        {   
+
             if (node == null)
             {
                 return -1;
@@ -38,7 +39,6 @@ namespace Lab0
             return 1 + Math.Max(leftHeight, rightHeight);
         }
 
-        // TODO
         public int? MinKey => MinKeyRecursive(Root);
 
         private int? MinKeyRecursive(BinarySearchTreeNode<T> node)
@@ -58,17 +58,24 @@ namespace Lab0
 
         }
 
-        // TODO
-        public int? MaxKey => throw new NotImplementedException();
+        public int? MaxKey => MaxKeyRecursive(Root);
 
-        // TODO
-        public BinarySearchTreeNode<T> Min => throw new NotImplementedException();
+        private int? MaxKeyRecursive(BinarySearchTreeNode<T> node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+            else if (node.Right == null)
+            {
+                return node.Key;
+            }
+            else
+            {
+                return MaxKeyRecursive(node.Right);
+            }
+        }
 
-        // TODO
-        public BinarySearchTreeNode<T> Max => throw new NotImplementedException();
-
-        // TODO
-        public double MedianKey => throw new NotImplementedException();
         public double MedianKey
         {
             get
@@ -76,7 +83,7 @@ namespace Lab0
                 // get the inorder keys
                 var keys = InOrderKeys;
                 //odd
-                if (keys.Count % 2 == 1) ;
+                if (keys.Count % 2 == 1) 
                 {
                     int middleIndex = keys.Count / 2;
                     return keys[middleIndex];
@@ -85,7 +92,7 @@ namespace Lab0
                 //even number of keys
                 else
                 {
-                    int middleIndex1 = keys.Count / 2;
+                    int middleIndex1 = keys.Count / 2 - 1;
                     int middleIndex2 = keys.Count / 2;
 
                     int sum = keys[middleIndex1] + keys[middleIndex2];
@@ -124,7 +131,6 @@ namespace Lab0
         }
 
 
-        // TODO
         public void Add(int key, T value)
         {
             if (Root == null)
@@ -137,7 +143,6 @@ namespace Lab0
                 AddRecursive(key, value, Root);
             }
         }
-        // TODO
         private void AddRecursive(int key, T value, BinarySearchTreeNode<T> parent)
         {
             // duplicate found
@@ -178,7 +183,6 @@ namespace Lab0
             }
         }
 
-        // TODO
         public void Clear()
         {
             Root = null;
@@ -196,27 +200,43 @@ namespace Lab0
             }
         }
 
-        // TODO
         public BinarySearchTreeNode<T> Next(BinarySearchTreeNode<T> node)
         {
             // find the min node in the right child's subtree
+            if (node.Right != null)
+            {
+                return MinNode(node.Right);
+            }
+            var parent = node.Parent;
+            while(parent != null && node == parent.Right)
+            {
+                node = parent;
+                parent = parent.Right;
+            }
+            return parent;
 
-
-
-            throw new NotImplementedException();
         }
 
-        // TODO
         public BinarySearchTreeNode<T> Prev(BinarySearchTreeNode<T> node)
         {
-            throw new NotImplementedException();
+            if (node.Left != null)
+            {
+                return MinNode(node.Left);
+            }
+            var parent = node.Parent;
+            while (parent != null && node == parent.Left)
+            {
+                node = parent;
+                parent = parent.Left;
+            }
+            return parent;
         }
 
         public List<BinarySearchTreeNode<T>> RangeSearch(int min, int max)
         {
             //Method 2=> Use InOrderKEy
            
-            List<BinarySearchTreeNode<T>> nodeList = new List<BinarySearchTreeNode<T>>;
+            List<BinarySearchTreeNode<T>> nodeList = new List<BinarySearchTreeNode<T>>();
             if (min > max)
             {
                 return nodeList;
@@ -224,19 +244,19 @@ namespace Lab0
 
             var orderKey = this.InOrderKeys;
 
-            foreach(int Key in orderedKeys)
+            foreach(int key in orderedKeys)
             {
-                if(Key >= min && Key <= max)
+                if(key >= min && key <= max)
                 {
-                    nodeList.Add(GetNode(Key));
+                    nodeList.Add(GetNode(key));
                 }
 
-                if (Key > max)
+                if (key > max)
                 {
                     break;
                 }
             }
-            return nodeList
+            return nodeList;
         }
 
         public void Remove(int key)
@@ -317,13 +337,21 @@ namespace Lab0
             // Swap Key and Data from successor to node
             // Remove the successor (a leaf node) (like case 1)
 
+            else
+            {
+                var sNode =Next(node);
+                Remove(sNode.Key);
 
+                sNode.Key = node.Key;
+                sNode.Value = node.Value;
+
+                return;
+            }
 
 
 
         }
 
-        // TODO
         public T Search(int key)
         {
             if (Contains(key))
@@ -343,7 +371,6 @@ namespace Lab0
         }
 
 
-        // TODO
         public List<int> InOrderKeys
         {
             get
@@ -372,8 +399,6 @@ namespace Lab0
             InOrderKeysRecursive(node.Right, keys);
             
         }
-
-        // TODO
         public List<int> PreOrderKeys
         {
             get
@@ -397,7 +422,6 @@ namespace Lab0
             PreOrderKeysRecursive(node.Right, keys);
         }
 
-        // TODO
         public List<int> PostOrderKeys
         {
             get
