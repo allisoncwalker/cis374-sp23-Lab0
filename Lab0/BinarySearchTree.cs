@@ -28,10 +28,10 @@ namespace Lab0
                 return -1;
             }
 
-            //if (node.Left == null && node.Right == null)
-            //{
-            //    return 0;
-            //}
+            if (node.Left == null && node.Right == null)
+            {
+                return 0;
+            }
 
             int leftHeight = HeightRecursive(node.Left);
             int rightHeight = HeightRecursive(node.Right);
@@ -156,7 +156,7 @@ namespace Lab0
             {
                 if (parent.Left == null)
                 {
-                    var newNode = new BinarySearchTreeNode<T>(key, value); ;
+                    var newNode = new BinarySearchTreeNode<T>(key, value);
                     parent.Left = newNode;
                     newNode.Parent = parent;
                     Count++;
@@ -207,13 +207,13 @@ namespace Lab0
             {
                 return MinNode(node.Right);
             }
-            var parent = node.Parent;
-            while(parent != null && node == parent.Right)
+            var pNode = node.Parent;
+            while(pNode != null && node == pNode.Right)
             {
-                node = parent;
-                parent = parent.Right;
+                node = pNode;
+                pNode = pNode.Right;
             }
-            return parent;
+            return pNode;
 
         }
 
@@ -221,15 +221,15 @@ namespace Lab0
         {
             if (node.Left != null)
             {
-                return MinNode(node.Left);
+                return MaxNode(node.Left);
             }
-            var parent = node.Parent;
-            while (parent != null && node == parent.Left)
+            var pNode = node.Parent;
+            while (pNode != null && node == pNode.Left)
             {
-                node = parent;
-                parent = parent.Left;
+                node = pNode;
+                pNode = pNode.Left;
             }
-            return parent;
+            return pNode;
         }
 
         public List<BinarySearchTreeNode<T>> RangeSearch(int min, int max)
@@ -242,9 +242,9 @@ namespace Lab0
                 return nodeList;
             }
 
-            var orderKey = this.InOrderKeys;
+            var orderedKeys = this.InOrderKeys;
 
-            foreach(int key in orderedKeys)
+            foreach (int key in orderedKeys)
             {
                 if(key >= min && key <= max)
                 {
@@ -269,7 +269,7 @@ namespace Lab0
                 return;
             }
 
-            Count--;
+            //Count--;
 
             // 1) leaf node
             if (node.Left == null && node.Right == null)
@@ -285,6 +285,7 @@ namespace Lab0
                     node.Parent = null;
                 }
 
+                Count--;
                 return;
             }
 
@@ -293,7 +294,12 @@ namespace Lab0
             {
                 // only has a right child
                 var child = node.Right;
-                if (parent.Left == node)
+                if (parent == null)
+                {
+                    Root = child;
+                    child.Parent = null;
+                }
+                else if (parent.Left == node)
                 {
                     parent.Left = child;
                     child.Parent = parent;
@@ -304,6 +310,7 @@ namespace Lab0
                     child.Parent = parent;
                 }
 
+                Count--;
                 return;
             }
 
@@ -311,7 +318,13 @@ namespace Lab0
             {
                 // only has a left child
                 var child = node.Left;
-                if (parent.Left == node)
+                if (parent == null)
+                {
+                    // Root
+                    Root = child;
+                    child.Parent = null;
+                }
+                else if (parent.Left == node)
                 {
                     parent.Left = child;
                     child.Parent = parent;
@@ -337,15 +350,14 @@ namespace Lab0
             // Swap Key and Data from successor to node
             // Remove the successor (a leaf node) (like case 1)
 
-            else
+            else  if (node.Left != null && node.Right != null)
             {
-                var sNode =Next(node);
+                var sNode = Next(node);
                 Remove(sNode.Key);
 
                 sNode.Key = node.Key;
                 sNode.Value = node.Value;
 
-                return;
             }
 
 
@@ -438,7 +450,13 @@ namespace Lab0
 
         private void PostOrderKeysRecursive(BinarySearchTreeNode<T> node, List<int> keys)
         {
-            
+            if (node == null)
+            {
+                return;
+            }
+            PostOrderKeysRecursive(node.Left, keys);
+            PostOrderKeysRecursive(node.Right, keys);
+            keys.Add(node.Key);
         }
 
         public BinarySearchTreeNode<T> MinNode(BinarySearchTreeNode<T> node)
